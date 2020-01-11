@@ -1,7 +1,7 @@
+package Lesson_1;
 
-
-import Competitors.*;
-import Obstacles.*;
+import Lesson_1.Competitors.*;
+import Lesson_1.Obstacles.*;
 
 public class Main {
     public static void main(String[] args) {

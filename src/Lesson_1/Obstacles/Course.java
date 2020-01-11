@@ -1,7 +1,7 @@
-package Obstacles;
+package Lesson_1.Obstacles;
 
-import Competitors.Competitor;
-import Competitors.Team;
+import Lesson_1.Competitors.Competitor;
+import Lesson_1.Competitors.Team;
 
 import java.util.ArrayList;
 
