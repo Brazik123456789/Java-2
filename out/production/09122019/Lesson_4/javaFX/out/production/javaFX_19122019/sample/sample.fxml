@@ -11,7 +11,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
-<VBox fx:controller="Lesson_4.javaFX.src.sample.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center">
+<VBox fx:controller="sample.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center">
     <MenuBar>
         <Menu mnemonicParsing="false" text="Меню">
             <MenuItem text="Редактировать никнейм" mnemonicParsing="false" fx:id="nikRed"/>
