@@ -1,20 +1,21 @@
 package Lesson_6_DZ.DZ;
 
+import javafx.scene.transform.Scale;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Server {
-        private static Socket socket;
-        private static ServerSocket server;
-        private static BufferedReader in;
-        private static PrintWriter out;
-        private static BufferedReader reader;
-
 
     public static void main(String[] args)  {
+
+        ServerSocket server = null;
+        Socket socket = null;
+
         try {
-            reader = new BufferedReader(new InputStreamReader(System.in));
+            Scanner reader = new Scanner(System.in);
             server = new ServerSocket(5553);
             System.out.println("Сервер запущен!");
 
@@ -22,45 +23,50 @@ public class Server {
                 socket = server.accept();
                 System.out.println("Клиент присоединиился");
 
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
+                Scanner in = new Scanner(socket.getInputStream());
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            while (true){
-                                String str = in.readLine();
-                                System.out.println(str);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+            Thread inStr = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    while (true){
+                        String str = in.nextLine();
+                        if (str.equals("/end")) break;
+                        System.out.println(str);
                     }
-                }).start();
+                }
+            });
+            inStr.start();
 
-                new Thread(new Runnable() {
+                Thread outStr = new Thread (new Runnable() {
                     @Override
                     public void run() {
-                        try {
+
                             while (true){
-                                String str = reader.readLine();
+                                String str = reader.nextLine();
                                 out.println(str);
-                                System.out.println(str);
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                     }
-                }).start();
+                });
+                outStr.setDaemon(true);
+                outStr.start();
 
-
+            try {
+                inStr.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
             try {
                 socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
                 server.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -68,4 +74,5 @@ public class Server {
 
         }
     }
+
 }

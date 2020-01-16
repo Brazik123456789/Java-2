@@ -2,70 +2,65 @@ package Lesson_6_DZ.DZ;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
-    private static Socket socket;
-    private static BufferedReader reader;
-    private static PrintWriter out;
-    private static BufferedReader in;
 
     private static String ip = "localhost";
     private static int port = 5553;
 
 
     public static void main(String[] args) {
+        Socket socket = null;
 
         try {
             socket = new Socket(ip,port);
-            reader = new BufferedReader(new InputStreamReader(System.in));
 
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(),true);
 
-            new Thread(new Runnable() {
+            Scanner in = new Scanner(socket.getInputStream());
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+            Scanner reader = new Scanner(System.in);
+
+            Thread inStr = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        while (true){
-                            String str = in.readLine();
-                            System.out.println(str);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                    while (true){
+                        String str = in.nextLine();
+                        if (str.equals("/end")) break;
+                        System.out.println(str);
                     }
                 }
-            }).start();
+            });
+            inStr.start();
 
-            new Thread(new Runnable() {
+            Thread outStr = new Thread (new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        while (true){
-                            String str = reader.readLine();
-                            out.println(str);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                    while (true){
+                        String str = reader.nextLine();
+                        out.println(str);
                     }
                 }
-            }).start();
+            });
+            outStr.setDaemon(true);
+            outStr.start();
 
-
-
+            try {
+                inStr.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-
-
-
-
-
-
     }
-
-
-
-
 }
