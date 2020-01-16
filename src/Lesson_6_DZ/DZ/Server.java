@@ -15,25 +15,30 @@ public class Server {
         Socket socket = null;
 
         try {
-            Scanner reader = new Scanner(System.in);
             server = new ServerSocket(5553);
             System.out.println("Сервер запущен!");
 
 
-                socket = server.accept();
-                System.out.println("Клиент присоединиился");
+            socket = server.accept();
+            System.out.println("Клиент присоединиился");
 
-                Scanner in = new Scanner(socket.getInputStream());
-                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
             Thread inStr = new Thread(new Runnable() {
                 @Override
                 public void run() {
 
                     while (true){
-                        String str = in.nextLine();
-                        if (str.equals("/end")) break;
-                        System.out.println(str);
+                        String str = null;
+                        try {
+                            str = in.readLine();
+                            if (str.equals("/end")) break;
+                            System.out.println(str);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
@@ -44,8 +49,13 @@ public class Server {
                     public void run() {
 
                             while (true){
-                                String str = reader.nextLine();
-                                out.println(str);
+                                String str = null;
+                                try {
+                                    str = reader.readLine();
+                                    out.println(str);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                     }
                 });

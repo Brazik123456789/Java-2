@@ -16,19 +16,24 @@ public class Client {
         try {
             socket = new Socket(ip,port);
 
-
-            Scanner in = new Scanner(socket.getInputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-            Scanner reader = new Scanner(System.in);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
             Thread inStr = new Thread(new Runnable() {
                 @Override
                 public void run() {
 
                     while (true){
-                        String str = in.nextLine();
-                        if (str.equals("/end")) break;
-                        System.out.println(str);
+                        String str = null;
+                        try {
+                            str = in.readLine();
+                            if (str.equals("/end")) break;
+                            System.out.println(str);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
             });
@@ -39,8 +44,13 @@ public class Client {
                 public void run() {
 
                     while (true){
-                        String str = reader.nextLine();
-                        out.println(str);
+                        String str = null;
+                        try {
+                            str = reader.readLine();
+                            out.println(str);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
